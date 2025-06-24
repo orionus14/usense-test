@@ -1,0 +1,14 @@
+<input type="file" accept="image/png, image/jpeg" (change)="onFileSelected($event)">
+
+@if (warningMessage) {
+  <p>Розмір зображення не повинен перевищувати 200 КБ</p>
+}
+
+@if (isRequest && !(convertedText$ | async)?.length) {
+  <p class="text-sm text-medium-gray">Text has not been found</p>
+} 
+@else {
+  @for (item of convertedText$ | async; track item) {
+    <p>{{ item.text }}</p>
+  }
+}
