@@ -27,7 +27,7 @@ export class ImagePickerComponent {
   imageFile: File | null = null;
   imageUrl: string | null = null;
 
-  onImageSelected(event: Event) {
+  onImageSelected(event: Event): void {
     this.convertedText$.next(null);
     this.warningMessage = false;
     this.isRequest = false;
@@ -54,7 +54,7 @@ export class ImagePickerComponent {
     this.imageUrl = URL.createObjectURL(file);
   }
 
-  onSendImage() {
+  onSendImage(): void {
     if (!this.imageFile) return;
 
     this.isLoading = true;
