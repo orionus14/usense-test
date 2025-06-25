@@ -1,14 +1,50 @@
-<input type="file" accept="image/png, image/jpeg" (change)="onFileSelected($event)">
+<div class="flex flex-col items-center">
+  <label class="bg-gray-100 border border-dashed border-gray-500 p-4 rounded cursor-pointer hover:bg-gray-200">
+    <span class="block text-center text-black">Click to upload image</span>
+    <input type="file" class="hidden" accept="image/png, image/jpeg" (change)="onImageSelected($event)" />
+  </label>
 
-@if (warningMessage) {
-  <p>Розмір зображення не повинен перевищувати 200 КБ</p>
-}
-
-@if (isRequest && !(convertedText$ | async)?.length) {
-  <p class="text-sm text-medium-gray">Text has not been found</p>
-} 
-@else {
-  @for (item of convertedText$ | async; track item) {
-    <p>{{ item.text }}</p>
+  @if (warningMessage) {
+    <p class="text-red-500 font-semibold mt-2">The image size must not exceed 200 KB!</p>
   }
-}
+
+  @if (imageUrl && !isLoading) {
+    <img [src]="imageUrl" alt="Preview" class="max-w-xs rounded shadow mt-2" />
+    @if (!isRequest) {
+      <button 
+        class="mt-2 p-2 rounded text-white font-medium bg-purple-900 hover:bg-purple-800" 
+        (click)="onSendImage()"
+      >
+        Send Image
+      </button>
+    }
+  }
+
+  @if (isLoading) {
+    <p class="select-none mt-2 font-medium text-xl">Looking for text...</p>
+  }
+
+  @if (isRequest && (convertedText$ | async)?.length) {
+    <h3 class="mt-8 uppercase font-semibold mb-1 select-none">Found text</h3>
+      <div class="relative border border-dashed border-gray-500 rounded py-8 px-6 mx-10 text-justify">
+        {{ textLine$ | async }}
+        <mat-icon 
+          class="text-lg cursor-pointer absolute top-0 right-0 text-purple-900 hover:text-purple-400"
+          (click)="copyToClipboard()">
+          content_copy
+        </mat-icon>
+        @if(isCopiedText) {
+          <p class="top-0 right-8 bg-gray-100 opacity-75 text-xs text-black p-2 rounded select-none absolute">
+            Text copied to clipboard!
+          </p>
+        }
+      </div>
+  } @else if (isRequest && !(convertedText$ | async)?.length && !isLoading) {
+    <div class="mt-2 flex items-center">
+      <div>
+        <mat-icon class="text-xl text-purple-900">error</mat-icon>
+      </div>
+      <p class="font-medium text-lg">Sorry, text has not been found :(</p>
+    </div>
+  } 
+</div>
